@@ -55,7 +55,8 @@ class DriveControllerTest extends TestCase
 
     public function test_remove_drive()
     {
-        $this->getJson('/api/drive/3/3');
+        $car = Car::find(3);
+        $car->update(['user_id' => 5]);
 
         $response = $this->getJson('/remove-car/3');
 
