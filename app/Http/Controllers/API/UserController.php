@@ -61,14 +61,42 @@ class UserController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/users/{id}",
+     *     operationId="carUser",
+     *     tags={"Users"},
+     *     summary="Get user by ID",
+     *     security={
+     *       {"api_key": {}},
+     *     },
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="The ID of user",
+     *         required=true,
+     *         example="1",
+     *         @OA\Schema(
+     *             type="integer",
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Everything is fine",
+     *         @OA\JsonContent(ref="#/components/schemas/User")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found"
+     *     ),
+     * )
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\UserResource
      */
-    public function show($id)
+    public function show($id): UserResource
     {
-        //
+        return new UserResource(User::findOrFail($id));
     }
 
     /**

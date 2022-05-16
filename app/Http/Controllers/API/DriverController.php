@@ -94,23 +94,24 @@ class DriverController extends Controller
     public function driveCar(int $user_id, int $car_id): JsonResponse
     {
         $car = new CarResource(Car::findOrFail($car_id));
-        $car_have_driver = new CarResource(Car::where('user_id', $user_id)->first());
 
-        if ($car_have_driver)
+        if ($car_have_driver = Car::where('user_id', $user_id)->first()) {
             return response()->json(['success' => 'You have a car', 'car' => $car_have_driver]);
+        }
 
         if (!empty($car->user)) {
+
             if ($car->user->id === $user_id) {
                 return response()->json(['success' => 'It is your car', 'car' => $car]);
             }
             return response()->json(['error' => 'This car is not free'], 404);
         }
+
         $car->update([
             'user_id' => $user_id,
-            'user' => new UserResource(User::findOrFail($user_id)),
         ]);
 
-        return response()->json(['success' => 'You give drive car', 'car' => $car]);
+        return response()->json(['success' => 'You give car for drive', 'car' => $car]);
     }
 
     /**
@@ -153,11 +154,10 @@ class DriverController extends Controller
         $car = new CarResource(Car::findOrFail($car_id));
 
         if (empty($car->user))
-            return response()->json(['error' => 'This car does not have driver', 'car' => $car]);
+            return response()->json(['error' => 'This car does not have driver', 'car' => $car], 404);
 
         $car->update([
             'user_id' => null,
-            'user' => null
         ]);
         return response()->json(['success' => 'Driver remove']);
     }

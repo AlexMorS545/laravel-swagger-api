@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Foundarium API",
+        "title": "Servic API for user can drive car",
         "contact": {
             "email": "admin@example.com"
         },
@@ -377,6 +377,47 @@
                 "responses": {
                     "200": {
                         "description": "Everything is fine"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user by ID",
+                "operationId": "carUser",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Everything is fine",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found"
                     }
                 },
                 "security": [

@@ -9,7 +9,7 @@ use Illuminate\Routing\Controller as BaseController;
 
 /**
  * @OA\Info(
- *     title="Foundarium API",
+ *     title="Servic API for user can drive car",
  *     version="1.0.0",
  *     @OA\Contact(
  *         email="admin@example.com"
