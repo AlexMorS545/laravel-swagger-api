@@ -153,7 +153,7 @@ class DriverController extends Controller
     {
         $car = new CarResource(Car::findOrFail($car_id));
 
-        if (empty($car->user))
+        if (empty($car->user_id))
             return response()->json(['error' => 'This car does not have driver', 'car' => $car], 404);
 
         $car->update([

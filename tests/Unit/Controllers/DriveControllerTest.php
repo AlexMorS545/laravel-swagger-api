@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\Controllers;
 
+use App\Http\Resources\CarResource;
+use App\Http\Resources\UserResource;
 use App\Models\Car;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -55,10 +57,10 @@ class DriveControllerTest extends TestCase
 
     public function test_remove_drive()
     {
-        $car = Car::find(3);
+        $car = new CarResource(Car::findOrFail(3));
         $car->update(['user_id' => 5]);
 
-        $response = $this->getJson('/remove-car/3');
+        $response = $this->getJson('/api/remove-car/3');
 
         $response
             ->assertOk()
