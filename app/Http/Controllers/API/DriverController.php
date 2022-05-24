@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Actions\GetAvailableCars;
+use App\Actions\GetCarForDriveAction;
+use App\Actions\RemoveDriverFromCar;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CarResource;
-use App\Http\Resources\UserResource;
-use App\Models\Car;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
@@ -36,14 +34,9 @@ class DriverController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function availableCars(): JsonResponse
+    public function availableCars(GetAvailableCars $getAvailableCars): JsonResponse
     {
-        $cars = CarResource::collection(Car::whereNull('user_id')->paginate(5));
-
-        if (!$cars)
-            return response()->json(['error' => 'Free cars not found']);
-
-        return response()->json($cars);
+        return response()->json($getAvailableCars());
     }
 
     /**
@@ -91,27 +84,9 @@ class DriverController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function driveCar(int $user_id, int $car_id): JsonResponse
+    public function driveCar(GetCarForDriveAction $getCarForDriveAction, int $user_id, int $car_id): JsonResponse
     {
-        $car = new CarResource(Car::findOrFail($car_id));
-
-        if ($car_have_driver = Car::where('user_id', $user_id)->first()) {
-            return response()->json(['success' => 'You have a car', 'car' => $car_have_driver]);
-        }
-
-        if (!empty($car->user)) {
-
-            if ($car->user->id === $user_id) {
-                return response()->json(['success' => 'It is your car', 'car' => $car]);
-            }
-            return response()->json(['error' => 'This car is not free'], 404);
-        }
-
-        $car->update([
-            'user_id' => $user_id,
-        ]);
-
-        return response()->json(['success' => 'You give car for drive', 'car' => $car]);
+        return response()->json($getCarForDriveAction($user_id, $car_id));
     }
 
     /**
@@ -149,16 +124,8 @@ class DriverController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function removeCar($car_id): JsonResponse
+    public function removeCar(RemoveDriverFromCar $removeDriverFromCar, int $car_id): JsonResponse
     {
-        $car = new CarResource(Car::findOrFail($car_id));
-
-        if (empty($car->user_id))
-            return response()->json(['error' => 'This car does not have driver', 'car' => $car], 404);
-
-        $car->update([
-            'user_id' => null,
-        ]);
-        return response()->json(['success' => 'Driver remove']);
+        return response()->json($removeDriverFromCar($car_id));
     }
 }
